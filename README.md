@@ -98,7 +98,6 @@ This implementation also supports regression task. To use DeepFM for regression,
 
 # Acknowledgments
 This project gets inspirations from the following projects:
-- [ ] ChenlongChen's [tensorflow-DeepFM][https://github.com/ChenglongChen/tensorflow-DeepFM]
 - [ ] He Xiangnan's [neural_factorization_machine](https://github.com/hexiangnan/neural_factorization_machine)
 - [ ] Jian Zhang's [YellowFin](https://github.com/JianGoForIt/YellowFin) (yellowfin optimizer is taken from here)
 
