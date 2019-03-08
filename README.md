@@ -1,9 +1,116 @@
-# PredictCTR-Frontend
-A quick look of Front-end of predict CTR on displaying advertisement
+# tensorflow-DeepFM
 
-Unfortunately, I cannot find our backend code at this moment.</br> 
-We saved them on AWS, but we did not continuous pay, so AWS stoped to provide service and we lost all data. </br>
-I modified some code to make it looks better. Now, everything is hard code. No matter what you input, it will give you the same answer. </br>
+This project includes a Tensorflow implementation of DeepFM [1].
+Model implemented by ChenglongChen, we just change some code for data read and input. 
 
-Find our demo on youtube!</br>
-https://www.youtube.com/watch?v=rdnCfT8albE
+We have problems in reading whole train file and test file due to the memory limits. We try to read training file into chunk, however it may cause problems beacuse the feature_index must calculate by the whole data including whole traing data and test data. So training by chunk may missing some import features. We though that's why we have good perfmance in each chunk, but AUC goes lower at the begining of every chunk. Also, test result is not good beacause of under=fitting. By estimating, A machine with 40+ memory may run the whole data set,
+ 
+The source code for implementing DeepFM are refer from github, and many source codes for feature engineering are missing. We gather codes for feature engineering as possible as we can.
+
+Script: code for feature engineering. Some codes are missing
+tensorflow-DeepFM: codes for implementing deepfm
+
+Dataset: 
+https://drive.google.com/open?id=1Ut61gUiNiIPhYsKLy1IU00U11Eh5Bne2
+
+https://drive.google.com/open?id=1P2V5c8Oca2LmpgVlFsSsXVJ7sTxprdT-
+# Usage
+## Input Format
+This implementation requires the input data in the following format:
+- [ ] **Xi**: *[[ind1_1, ind1_2, ...], [ind2_1, ind2_2, ...], ..., [indi_1, indi_2, ..., indi_j, ...], ...]*
+    - *indi_j* is the feature index of feature field *j* of sample *i* in the dataset
+- [ ] **Xv**: *[[val1_1, val1_2, ...], [val2_1, val2_2, ...], ..., [vali_1, vali_2, ..., vali_j, ...], ...]*
+    - *vali_j* is the feature value of feature field *j* of sample *i* in the dataset
+    - *vali_j* can be either binary (1/0, for binary/categorical features) or float (e.g., 10.24, for numerical features)
+- [ ] **y**: target of each sample in the dataset (1/0 for classification, numeric number for regression)
+
+
+## Init and train a model
+```
+import tensorflow as tf
+from sklearn.metrics import roc_auc_score
+
+# params
+dfm_params = {
+    "use_fm": True,
+    "use_deep": True,
+    "embedding_size": 8,
+    "dropout_fm": [1.0, 1.0],
+    "deep_layers": [32, 32],
+    "dropout_deep": [0.5, 0.5, 0.5],
+    "deep_layers_activation": tf.nn.relu,
+    "epoch": 30,
+    "batch_size": 1024,
+    "learning_rate": 0.001,
+    "optimizer_type": "adam",
+    "batch_norm": 1,
+    "batch_norm_decay": 0.995,
+    "l2_reg": 0.01,
+    "verbose": True,
+    "eval_metric": roc_auc_score,
+    "random_seed": 2017
+}
+
+# prepare training and validation data in the required format
+Xi_train, Xv_train, y_train = prepare(...)
+Xi_valid, Xv_valid, y_valid = prepare(...)
+
+# init a DeepFM model
+dfm = DeepFM(**dfm_params)
+
+# fit a DeepFM model
+dfm.fit(Xi_train, Xv_train, y_train)
+
+# make prediction
+dfm.predict(Xi_valid, Xv_valid)
+
+# evaluate a trained model
+dfm.evaluate(Xi_valid, Xv_valid, y_valid)
+```
+
+You can use early_stopping in the training as follow
+```
+dfm.fit(Xi_train, Xv_train, y_train, Xi_valid, Xv_valid, y_valid, early_stopping=True)
+```
+
+You can refit the model on the whole training and validation set as follow
+```
+dfm.fit(Xi_train, Xv_train, y_train, Xi_valid, Xv_valid, y_valid, early_stopping=True, refit=True)
+```
+
+You can use the FM or DNN part only by setting the parameter `use_fm` or `use_dnn` to `False`.
+
+## Regression
+This implementation also supports regression task. To use DeepFM for regression, you can set `loss_type` as `mse`. Accordingly, you should use eval_metric for regression, e.g., mse or mae.
+
+
+## Performance
+
+### DeepFM
+
+![dfm](example/fig/DeepFM.png)
+
+### FM
+
+![fm](example/fig/FM.png)
+
+### DNN
+
+![dnn](example/fig/DNN.png)
+
+## Some tips
+- [ ] You should tune the parameters for each model in order to get reasonable performance.
+- [ ] You can also try to ensemble these models or ensemble them with other models (e.g., XGBoost or LightGBM).
+
+# Reference
+[1] *DeepFM: A Factorization-Machine based Neural Network for CTR Prediction*, Huifeng Guo, Ruiming Tang, Yunming Yey, Zhenguo Li, Xiuqiang He.
+
+# Acknowledgments
+This project gets inspirations from the following projects:
+- [ ] ChenlongChen's [tensorflow-DeepFM][https://github.com/ChenglongChen/tensorflow-DeepFM]
+- [ ] He Xiangnan's [neural_factorization_machine](https://github.com/hexiangnan/neural_factorization_machine)
+- [ ] Jian Zhang's [YellowFin](https://github.com/JianGoForIt/YellowFin) (yellowfin optimizer is taken from here)
+
+# License
+MIT
+
