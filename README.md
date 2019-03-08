@@ -1,19 +1,10 @@
 # tensorflow-DeepFM
 
 This project includes a Tensorflow implementation of DeepFM [1].
-Model implemented by ChenglongChen, we just change some code for data read and input. 
-
-We have problems in reading whole train file and test file due to the memory limits. We try to read training file into chunk, however it may cause problems beacuse the feature_index must calculate by the whole data including whole traing data and test data. So training by chunk may missing some import features. We though that's why we have good perfmance in each chunk, but AUC goes lower at the begining of every chunk. Also, test result is not good beacause of under=fitting. By estimating, A machine with 40+ memory may run the whole data set,
- 
-The source code for implementing DeepFM are refer from github, and many source codes for feature engineering are missing. We gather codes for feature engineering as possible as we can.
 
 Script: code for feature engineering. Some codes are missing
 tensorflow-DeepFM: codes for implementing deepfm
 
-Dataset: 
-https://drive.google.com/open?id=1Ut61gUiNiIPhYsKLy1IU00U11Eh5Bne2
-
-https://drive.google.com/open?id=1P2V5c8Oca2LmpgVlFsSsXVJ7sTxprdT-
 # Usage
 ## Input Format
 This implementation requires the input data in the following format:
@@ -110,7 +101,4 @@ This project gets inspirations from the following projects:
 - [ ] ChenlongChen's [tensorflow-DeepFM][https://github.com/ChenglongChen/tensorflow-DeepFM]
 - [ ] He Xiangnan's [neural_factorization_machine](https://github.com/hexiangnan/neural_factorization_machine)
 - [ ] Jian Zhang's [YellowFin](https://github.com/JianGoForIt/YellowFin) (yellowfin optimizer is taken from here)
-
-# License
-MIT
 
