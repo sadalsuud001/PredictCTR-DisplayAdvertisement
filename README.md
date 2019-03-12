@@ -1,3 +1,12 @@
+# Predict Click-through Rate of displaying advertisement
+
+This project aimed to predict the click rate of a displaying advertisement. 
+Our final prediction model is 72% accuracy (AUC). 
+The Data we used came from Alibaba-Taobao. 
+The model we implemented is a combination of PNN and expended the width & depth of DeepFM. 
+
+
+
 # tensorflow-DeepFM
 
 This project includes a Tensorflow implementation of DeepFM [1].
